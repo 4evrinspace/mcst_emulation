@@ -46,7 +46,6 @@ void Converter::translate_asm(
     const std::vector<Converter::Converted_line>& converted_lines,
     std::fstream& file) {
     for (const Converter::Converted_line& i : converted_lines) {
-        std::cout << (int)i.opcode << " " << (int)i.destination << " " << (int)i.left_operand << " " << (int)i.right_operand << std::endl;
         file.write(&i.opcode, 1);
         file.write(&i.destination, 1);
         file.write(&i.left_operand, 1);
@@ -58,4 +57,5 @@ void Converter::translate_asm(
     const std::vector<Converter::Converted_line>& converted_lines) {
     std::fstream file("out.o", std::ios::out | std::ios::binary);
     translate_asm(converted_lines, file);
+    file.close();
 }
