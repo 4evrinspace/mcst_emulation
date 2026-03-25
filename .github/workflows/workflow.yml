@@ -1,0 +1,23 @@
+name: Test code 
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Test emulator
+      run: make test_emulator
+    
+    - name: Test converter
+      run: make test_converter
+    
+    - name: Clean
+      run: make clean 
