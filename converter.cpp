@@ -4,8 +4,9 @@
 #include <regex>
 #include <stdexcept>
 
-Converter::Converted_line Converter::convert_from_textline(
-    const std::string& input_line) {
+namespace converter {
+
+Converted_line convert_from_textline(const std::string& input_line) {
     // это регулярное выражение ловит строки вида LI R* 0xAAAA где
     //  * - число в [0, 15]
     //  0xAAAA - двухбайтовое число (сделал, что ловит все регистры)
@@ -20,7 +21,7 @@ Converter::Converted_line Converter::convert_from_textline(
 
     if (std::regex_match(input_line, matched_groups, load_regex)) {
         int load_number = std::stoi(matched_groups[2], nullptr, 16);
-        return Converter::Converted_line{
+        return Converted_line{
             .opcode = 0,
             .destination = (char)std::stoi(matched_groups[1]),
             .left_operand = (char)(load_number & 255),         // младший байт
@@ -28,7 +29,7 @@ Converter::Converted_line Converter::convert_from_textline(
 
         };
     } else if (std::regex_match(input_line, matched_groups, add_regex)) {
-        return Converter::Converted_line{
+        return Converted_line{
             .opcode = 2,
             // ADD Ra Rb Rc : a-> matched_groups[1], b-> matched_groups[2],
             // c->matched_groups[3]
@@ -42,20 +43,26 @@ Converter::Converted_line Converter::convert_from_textline(
     }
 }
 
-void Converter::translate_asm(
-    const std::vector<Converter::Converted_line>& converted_lines,
-    std::fstream& file) {
-    for (const Converter::Converted_line& i : converted_lines) {
-        file.write(&i.opcode, 1);
-        file.write(&i.destination, 1);
-        file.write(&i.left_operand, 1);
-        file.write(&i.right_operand, 1);
+void translate_asm(const std::vector<Converted_line>& converted_lines,
+                   std::fstream& file) {
+    for (const Converted_line& i : converted_lines) {
+        file.write((char*)&i, sizeof(Converted_line));
     }
 }
 
-void Converter::translate_asm(
-    const std::vector<Converter::Converted_line>& converted_lines) {
+void translate_asm(const std::vector<Converted_line>& converted_lines) {
     std::fstream file("out.o", std::ios::out | std::ios::binary);
     translate_asm(converted_lines, file);
     file.close();
 }
+
+std::vector<Converted_line> extract_from_binary(std::fstream& file) {
+    Converted_line buffer;
+    std::vector<Converted_line> ans;
+    while (file.read((char*)&buffer, sizeof(buffer))) {
+        ans.push_back(buffer);
+    }
+    return ans;
+}
+
+};  // namespace converter
