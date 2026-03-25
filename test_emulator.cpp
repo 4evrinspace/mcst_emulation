@@ -14,7 +14,8 @@ int main() {
     converter::translate_asm(commands);
     std::fstream file;
     file.open("out.o", std::ios::binary | std::ios::in);
-    std::vector<converter::Converted_line> extracted_lines = converter::extract_from_binary(file);
+    std::vector<converter::Converted_line> extracted_lines =
+        converter::extract_from_binary(file);
     file.close();
     emulator::Emulator emul;
     for (converter::Converted_line& i : extracted_lines) {
@@ -23,5 +24,5 @@ int main() {
     assert(emul.registers[0] == 1);
     assert(emul.registers[1] == 0x7000);
     assert(emul.registers[2] == 0x7001);
-    std::cout << emul.print();   
+    std::cout << emul.print() << std::endl;
 }
