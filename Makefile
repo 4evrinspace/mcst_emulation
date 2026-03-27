@@ -1,16 +1,16 @@
-all: converter.o emulator.o
+all: assembler emulator
+
+assembler: converter.o runner_converter.o
+	g++  converter.o runner_converter.o -o assembler
+
+emulator: converter.o emulator.o runner_emulator.o
+	g++ converter.o emulator.o runner_emulator.o -o emulator
 
 clean: 
-	rm -f converter.o emulator.o test_converter test_converter.o test_emulator test_emulator.o out.o in.s
+	rm -f out *.o emulator assembler
 
-converter.o : converter.cpp
-	g++ -c converter.cpp
+.PHONY: clean
 
-emulator.o : emulator.cpp
-	g++ -c emulator.cpp
-
-test_converter.o: test_converter.cpp
-	g++ -c test_converter.cpp
 
 test_converter: converter.o test_converter.o
 	g++ test_converter.o converter.o -o test_converter
@@ -24,3 +24,5 @@ test_emulator: converter.o emulator.o test_emulator.o
 	./test_emulator
 
 
+%.o: %.cpp
+	g++ $< -c

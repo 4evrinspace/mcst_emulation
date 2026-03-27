@@ -8,9 +8,9 @@ namespace emulator {
 std::string Emulator::print() {
     std::stringstream stream;
     for (int i = 0; i < 15; i++) {
-        stream << "R" << i << "=0x" << std::hex << registers[i] << ", ";
+        stream << "R" << std::dec << i << "=0x" << std::hex << registers[i] << ", ";
     }
-    stream << "R" << 15 << "=0x" << std::hex << registers[15];
+    stream << "R" << std::dec << 15 << "=0x" << std::hex << registers[15];
     return stream.str();
 }
 

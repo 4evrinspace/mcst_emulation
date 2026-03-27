@@ -13,7 +13,7 @@ class Emulator {
     Emulator() = default;
 
     // 32-ух разрядные регистры - значит что это буквально интовая переменная
-    std::array<int, 16> registers;
+    std::array<int, 16> registers{};
 
     // Возвращает стркоове представление регистров в данный момент времени
     std::string print();
